@@ -1,0 +1,41 @@
+feature,area,priority,original,clone,notes
+Sign-in (email/Google/Apple),auth,must,yes (SSO "GO ID"),no,use standard providers; no copy of GO ID
+Language picker Arabic/English,i18n,must,yes,no,Arabic-first RTL
+Dashboard chooser (Trading/Learning),navigation,should,yes,no,Investment dashboard dropped
+AI coach chat text,ai,must,yes,no,Claude vision model
+Chart screenshot upload + analysis,ai,must,yes,no,core loop F02
+Scalp / Swing mode for analysis,ai,must,yes,no,trend mode as could
+Trend analysis mode,ai,could,yes,no,
+Structured trade setup card (dir/entry/SL/TP/invalidation/confidence),ai,must,yes (setup shown),no,strict JSON from model
+Grounding with live gold price + ATR,ai,must,unknown,no,differentiator: sanity-check levels read from image
+Voice input to coach,ai,should,yes,no,speech-to-text
+Voice replies,ai,could,unknown,no,
+Thread-based chat history,ai,should,yes,no,
+Daily AI usage limit per tier,ai,must,unknown,no,controls model cost
+Auto-tracking of every AI setup vs live price,tracking,must,unknown,no,differentiator: honest grading
+Live signals feed,signals,must,yes,no,signals from user's ORB_Pro_v2 rules
+Signals grouped by asset / style,signals,should,yes,no,gold only at start
+Realtime delivery (WebSocket),signals,must,yes,no,
+Push notifications for signals,signals,must,yes,no,
+Active trade detail with live P/L,signals,must,yes,no,
+One-click trade execution,trading,skip,yes,no,broker integration/regulation; later optional MT5 link
+Win/loss and win-rate stats,analytics,must,yes,no,
+7-day performance summary,analytics,should,yes,no,
+Trade history,analytics,must,yes,no,
+Public track record page,analytics,should,no,no,differentiator
+Curated news feed,news,should,yes,no,needs news API licence
+News impact analysis (AI),news,could,yes,no,
+News source links,news,should,yes,no,
+Learning dashboard,learning,must,yes,no,
+Lessons in order with quiz unlock,learning,must,yes,no,
+On-demand video lessons,learning,should,yes,no,own content
+Live sessions list + reminders,learning,could,yes,no,own sessions
+Strategies library (LAB),learning,should,yes,no,own strategies (ORB etc.)
+Expert portfolio tracker / follow,social,skip,yes,no,copy-trading regulation + network effect
+Subscription tiers + paywall,billing,must,yes (Connect tier),no,web payments first; IAP later
+Restore purchases,billing,should,yes (store),no,
+Profile & settings,account,must,inferred,no,
+Notification settings,account,should,inferred,no,
+Risk disclaimer on every analysis,legal,must,yes,no,educational framing
+Investment dashboard (stocks),scope,skip,yes,no,out of scope: gold focus
+Original name/logo/content/educators,brand,skip,yes,no,owned by original
