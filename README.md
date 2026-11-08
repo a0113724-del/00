@@ -8,7 +8,7 @@ against the live gold price and graded, so users see an honest track record.
 
 ## Status
 - [x] Recon of the reference app (public sources only) — `replica/recon.md`, `replica/features.csv`
-- [ ] Architecture (stack, schema, API, build order)
+- [x] Architecture (stack, schema, API, build order) — `replica/architecture.md`, `replica/schema.sql`
 - [ ] Design system
 - [ ] Build v1 (web / PWA)
 - [ ] Brand & name check
