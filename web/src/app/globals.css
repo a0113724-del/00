@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+@import "@fontsource/ibm-plex-sans-arabic/600.css";
+@import "@fontsource/ibm-plex-sans-arabic/700.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "../styles/tokens.css";
+@import "../styles/tailwind-theme.css";
+
+@layer base {
+  html { background: var(--sb-color-bg); color: var(--sb-color-text); font-family: var(--sb-font-sans); }
+  body { min-height: 100dvh; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: 2px solid var(--sb-color-focus); outline-offset: 2px; }
+  .num { font-family: var(--sb-font-mono); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+  }
+}
