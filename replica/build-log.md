@@ -16,3 +16,4 @@ E2E (Playwright, Chrome, 390px + 1440px): login validation, keyboard login, wron
 | S14 strategy library | 2026-11-08 | done (v1) | lessons/quizzes per strategy (M4) | — |
 
 Unit tests: `npm test` → 10/10 (validation geometry, R:R, stop width per style, strategy sanitising, forced-strategy prompt). Prompt ≈ 5k chars in auto mode.
+| site (GitHub Pages) | 2026-11-08 | done (personal v1) | server-side key, accounts, limits, grading — need the web app + backend for customers | static Vite app reusing `web/src`; Gemini from the browser with the user's own key (stored on device); IndexedDB for analyses + images; e2e with intercepted Gemini: valid setup rendered, unknown strategy dropped, wrong-side stop re-asked once then downgraded to no-trade, persistence after reload, owner image shown |

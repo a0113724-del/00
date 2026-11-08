@@ -38,3 +38,11 @@ ANTHROPIC_API_KEY=...       # optional, if AI_PROVIDER=claude
 AI_FALLBACK_MOCK=1          # dev only: use the labelled demo provider if the AI API is unreachable
 SESSION_SECRET=...          # random string
 ```
+
+## GitHub Pages version (`site/`)
+Static build of the app for personal use on GitHub Pages: hash routes, analyses stored on the device (IndexedDB),
+Gemini called from the browser with **your own key entered in the app (حسابي)** — the key is never in the code or the repo.
+It reuses `web/src` (design tokens, components, prompt, strategy playbook, validation). Deployed by `.github/workflows/pages.yml` on every push.
+```bash
+cd site && npm install && npm run dev
+```
