@@ -1,17 +1,17 @@
 feature,area,priority,original,clone,notes
-Sign-in (email/Google/Apple),auth,must,yes (SSO "GO ID"),no,use standard providers; no copy of GO ID
+Sign-in (email/Google/Apple),auth,must,"yes (SSO ""GO ID"")",partial,use standard providers; no copy of GO ID; dev email sign-in with signed cookie; Supabase magic link/Google in replica-backend
 Language picker Arabic/English,i18n,must,yes,no,Arabic-first RTL
 Dashboard chooser (Trading/Learning),navigation,should,yes,no,Investment dashboard dropped
 AI coach chat text,ai,must,yes,no,Claude vision model
-Chart screenshot upload + analysis,ai,must,yes,no,core loop F02
-Scalp / Swing mode for analysis,ai,must,yes,no,trend mode as could
+Chart screenshot upload + analysis,ai,must,yes,yes,core loop F02; S06; Gemini/Claude/mock providers; magic-byte check; 5MB
+Scalp / Swing mode for analysis,ai,must,yes,yes,trend mode as could; S06 segmented control
 Trend analysis mode,ai,could,yes,no,
-Structured trade setup card (dir/entry/SL/TP/invalidation/confidence),ai,must,yes (setup shown),no,strict JSON from model
-Grounding with live gold price + ATR,ai,must,unknown,no,differentiator: sanity-check levels read from image
+Structured trade setup card (dir/entry/SL/TP/invalidation/confidence),ai,must,yes (setup shown),yes,"strict JSON from model; TradeSetupCard, all statuses"
+Grounding with live gold price + ATR,ai,must,unknown,partial,differentiator: sanity-check levels read from image; validation by % of price + price_seen; live price/ATR arrive with M2 bridge
 Voice input to coach,ai,should,yes,no,speech-to-text
 Voice replies,ai,could,unknown,no,
 Thread-based chat history,ai,should,yes,no,
-Daily AI usage limit per tier,ai,must,unknown,no,controls model cost
+Daily AI usage limit per tier,ai,must,unknown,yes,controls model cost; atomic consume + refund on failure; free 3/day
 Auto-tracking of every AI setup vs live price,tracking,must,unknown,no,differentiator: honest grading
 Live signals feed,signals,must,yes,no,signals from user's ORB_Pro_v2 rules
 Signals grouped by asset / style,signals,should,yes,no,gold only at start
@@ -21,7 +21,7 @@ Active trade detail with live P/L,signals,must,yes,no,
 One-click trade execution,trading,skip,yes,no,broker integration/regulation; later optional MT5 link
 Win/loss and win-rate stats,analytics,must,yes,no,
 7-day performance summary,analytics,should,yes,no,
-Trade history,analytics,must,yes,no,
+Trade history,analytics,must,yes,partial,S10 list of own analyses; closed results after grading (M2)
 Public track record page,analytics,should,no,no,differentiator
 Curated news feed,news,should,yes,no,needs news API licence
 News impact analysis (AI),news,could,yes,no,
@@ -34,8 +34,8 @@ Strategies library (LAB),learning,should,yes,no,own strategies (ORB etc.)
 Expert portfolio tracker / follow,social,skip,yes,no,copy-trading regulation + network effect
 Subscription tiers + paywall,billing,must,yes (Connect tier),no,web payments first; IAP later
 Restore purchases,billing,should,yes (store),no,
-Profile & settings,account,must,inferred,no,
+Profile & settings,account,must,inferred,partial,S20 account + logout; settings later
 Notification settings,account,should,inferred,no,
-Risk disclaimer on every analysis,legal,must,yes,no,educational framing
+Risk disclaimer on every analysis,legal,must,yes,yes,educational framing; card footer + banners
 Investment dashboard (stocks),scope,skip,yes,no,out of scope: gold focus
 Original name/logo/content/educators,brand,skip,yes,no,owned by original
