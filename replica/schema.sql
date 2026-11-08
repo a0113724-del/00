@@ -106,6 +106,10 @@ create table trade_setups (
   invalidation text,
   confidence text check (confidence in ('low','medium','high')),
   rationale_ar text, rationale_en text,
+  strategies jsonb not null default '[]',         -- [{id, note}] strategies the AI found on the chart
+  primary_strategy text,                          -- id from the playbook the setup is built on
+  confluence smallint check (confluence between 0 and 100),
+  requested_strategy text,                        -- user forced a single strategy (null = auto)
   price_at_creation numeric(12,3),
   valid_until timestamptz not null,       -- pending setups expire (scalp ~4h, swing ~5d)
   status text not null default 'pending'
@@ -127,6 +131,7 @@ create index on trade_setups (user_id, created_at desc);
 create index on trade_setups (source, status) where status in ('pending','active','tp1','tp2');
 create index on trade_setups (source, published_at desc) where source = 'signal';
 create index on trade_setups (strategy_id);
+create index on trade_setups (primary_strategy, status);
 create trigger trade_setups_upd before update on trade_setups for each row execute function set_updated_at();
 
 -- ---------------------------------------------------------------- AI coach
@@ -254,6 +259,17 @@ select source, style, date_trunc('week', closed_at) as week,
 from trade_setups
 where status not in ('pending','active','cancelled','no_trade')
 group by 1, 2, 3;
+
+-- per-strategy honesty: which playbook strategies actually win on gold
+create or replace view strategy_stats as
+select primary_strategy, style,
+       count(*) filter (where result_r is not null) as closed,
+       count(*) filter (where result_r > 0) as wins,
+       round(avg(result_r), 3) as avg_r,
+       round(sum(result_r), 2) as sum_r
+from trade_setups
+where source = 'ai' and primary_strategy is not null and status not in ('pending','active','cancelled','no_trade')
+group by 1, 2;
 
 -- ---------------------------------------------------------------- RLS
 alter table profiles enable row level security;

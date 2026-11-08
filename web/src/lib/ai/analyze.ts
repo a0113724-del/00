@@ -7,16 +7,16 @@ import { mock, pickProvider, ProviderError, type ProviderResult } from "./provid
 export interface AnalysisOutcome extends ProviderResult { warnings: string[]; promptVersion: string; fallbackReason?: string }
 
 /** Ask the model, validate, re-ask once with the errors, else downgrade to "no trade". */
-export async function analyzeChart(img: Buffer, mime: string, style: Style, note?: string, lastPrice?: number): Promise<AnalysisOutcome> {
+export async function analyzeChart(img: Buffer, mime: string, style: Style, note?: string, lastPrice?: number, only?: string): Promise<AnalysisOutcome> {
   let provider = pickProvider();
   let fallbackReason: string | undefined;
   const call = async (errs?: string[]) => {
-    try { return await provider.analyze(img, mime, buildPrompt(style, { lastPrice }, note, errs)); }
+    try { return await provider.analyze(img, mime, buildPrompt(style, { lastPrice }, note, errs, only)); }
     catch (e) {
       // Network blocked / no key in development: fall back to the demo provider only if allowed.
       if (e instanceof ProviderError && (e.kind === "network" || e.kind === "auth") && process.env.AI_FALLBACK_MOCK === "1" && provider !== mock) {
         fallbackReason = e.message; provider = mock;
-        return provider.analyze(img, mime, buildPrompt(style, { lastPrice }, note, errs));
+        return provider.analyze(img, mime, buildPrompt(style, { lastPrice }, note, errs, only));
       }
       throw e;
     }
@@ -29,7 +29,7 @@ export async function analyzeChart(img: Buffer, mime: string, style: Style, note
     v = validateSetup(r.setup, style, lastPrice);
   }
   if (!v.ok) {
-    const none: AiSetup = { ...r.setup, direction: "none", entry_low: null, entry_high: null, sl: null, tp1: null, tp2: null,
+    const none: AiSetup = { ...r.setup, primary_strategy: null, direction: "none", entry_low: null, entry_high: null, sl: null, tp1: null, tp2: null,
       rationale_ar: "ما طلع تحليل بمستويات منطقية من هالصورة، فما نعطيك صفقة. جرب صورة أوضح بيها أرقام السعر، أو فريم ثاني." };
     return { ...r, setup: none, warnings: [...v.warnings, "التحليل الأولي ما نجح بالفحص، فحولناه إلى: ماكو صفقة."], promptVersion: PROMPT_VERSION, fallbackReason };
   }

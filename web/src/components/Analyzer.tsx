@@ -8,16 +8,19 @@ import { TradeSetupCard } from "./TradeSetupCard";
 import { cn } from "./ui/cn";
 import type { StoredSetup, Style } from "@/lib/types";
 import { toCard } from "@/lib/view";
+import { STRATEGIES, strategyName } from "@/lib/ai/strategies";
 
 const MAX = 5 * 1024 * 1024;
 const OK = ["image/png", "image/jpeg", "image/webp"];
-const STEPS = ["نرفع الصورة…", "نقرأ الشارت ومحور السعر…", "نحدد الدخول والستوب والأهداف…", "نفحص المستويات…"];
+const FAMILIES: Record<string, string> = {"price_action": "حركة السعر", "patterns": "النماذج الفنية", "smc": "السيولة والمؤسسات (SMC)", "indicators": "المؤشرات", "sessions": "الجلسات والصناديق", "structure": "هيكل السوق"};
+const STEPS = ["نرفع الصورة…", "نقرأ الشارت ومحور السعر…", "نفحص 25 استراتيجية…", "نحدد الدخول والستوب والأهداف…", "نفحص المستويات…"];
 
 export function Analyzer({ remaining: initialRemaining, limit }: { remaining: number; limit: number }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [style, setStyle] = useState<Style>("scalp");
   const [note, setNote] = useState("");
+  const [strategy, setStrategy] = useState("auto");
   const [drag, setDrag] = useState(false);
   const [busy, setBusy] = useState(false);
   const [step, setStep] = useState(0);
@@ -48,7 +51,7 @@ export function Analyzer({ remaining: initialRemaining, limit }: { remaining: nu
     if (!file) return;
     setBusy(true); setStep(0); setError(null); setResult(null);
     const fd = new FormData();
-    fd.set("image", file); fd.set("style", style); if (note.trim()) fd.set("note", note.trim());
+    fd.set("image", file); fd.set("style", style); fd.set("strategy", strategy); if (note.trim()) fd.set("note", note.trim());
     try {
       const res = await fetch("/api/analyze", { method: "POST", body: fd });
       const j = await res.json().catch(() => ({}));
@@ -97,9 +100,22 @@ export function Analyzer({ remaining: initialRemaining, limit }: { remaining: nu
 
           <div className="flex flex-col gap-2">
             <span className="text-sm font-semibold" id="style-label">نوع الصفقة</span>
-            <Segmented label="نوع الصفقة" value={style} onChange={setStyle}
+            <Segmented label="نوع الصفقة" value={style} onChange={(v) => { setStyle(v); if (strategy !== "auto" && !STRATEGIES.find((x) => x.id === strategy)?.styles.includes(v)) setStrategy("auto"); }}
               options={[{ value: "scalp", label: "سريعة" }, { value: "swing", label: "طويلة" }]} />
             <p className="text-xs text-muted">{style === "scalp" ? "سريعة: من دقائق لساعات، ستوب قريب." : "طويلة: من يوم لأيام، ستوب أبعد وأهداف أكبر."}</p>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="strategy" className="text-sm font-medium">الاستراتيجية</label>
+            <select id="strategy" value={strategy} onChange={(e) => setStrategy(e.target.value)}
+              className="h-11 rounded-md border border-border-input bg-surface px-3 text-md text-text">
+              <option value="auto">تلقائي: يفحص كل الاستراتيجيات ويختار الأقوى</option>
+              {Object.entries(FAMILIES).map(([fid, fname]) => {
+                const list = STRATEGIES.filter((x) => x.family === fid && x.styles.includes(style));
+                return list.length ? <optgroup key={fid} label={fname}>{list.map((x) => <option key={x.id} value={x.id}>{x.name_ar}</option>)}</optgroup> : null;
+              })}
+            </select>
+            <p className="text-xs text-muted">{strategy === "auto" ? "ينصح بيه: التحليل يعتمد على أكثر من سبب متوافق." : `يحلل على ${strategyName(strategy)} بس. إذا شروطها مو موجودة يگلك ماكو صفقة.`}</p>
           </div>
 
           <div className="flex flex-col gap-1.5">

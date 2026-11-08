@@ -4,6 +4,7 @@ import { getUser } from "@/lib/session";
 import { db } from "@/lib/data";
 import { analyzeChart } from "@/lib/ai/analyze";
 import { ProviderError } from "@/lib/ai/providers";
+import { STRATEGIES } from "@/lib/ai/strategies";
 import { LIMITS, type StoredSetup, type Style } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
   const note = (form.get("note") as string | null)?.slice(0, 300) || undefined;
   if (!(file instanceof File)) return err(400, "no_image", "اختار صورة الشارت.");
   if (style !== "scalp" && style !== "swing") return err(400, "bad_style", "اختار نوع الصفقة.");
+  const reqStrategy = String(form.get("strategy") || "auto");
+  const only = reqStrategy === "auto" ? undefined : STRATEGIES.find((x) => x.id === reqStrategy && x.styles.includes(style))?.id;
+  if (reqStrategy !== "auto" && !only) return err(400, "bad_strategy", "الاستراتيجية ما تناسب نوع الصفقة المختار.");
   if (file.size > MAX) return err(413, "too_large", "الصورة أكبر من 5 ميگا.");
   const bytes = Buffer.from(await file.arrayBuffer());
   const mime = sniff(bytes);
@@ -44,7 +48,7 @@ export async function POST(req: Request) {
 
   try {
     const imagePath = await db.saveChart(user.id, bytes, TYPES[mime]);
-    const out = await analyzeChart(bytes, mime, style, note);
+    const out = await analyzeChart(bytes, mime, style, note, undefined, only);
     const s = out.setup;
     const now = new Date();
     const setup: StoredSetup = {
@@ -59,6 +63,10 @@ export async function POST(req: Request) {
       provider: out.provider, model: out.model, promptVersion: out.promptVersion, mock: out.mock,
       warnings: [...out.warnings, ...(out.fallbackReason ? ["ما گدرنا نوصل لخدمة الذكاء الاصطناعي، فهذا تحليل تجريبي وهمي."] : [])],
       note,
+      strategies: s.strategies_matched.map((m) => ({ id: m.id, note: m.note_ar })),
+      primaryStrategy: s.primary_strategy ?? undefined,
+      confluence: s.confluence_score,
+      requestedStrategy: only,
     };
     await db.insertSetup(setup);
     return NextResponse.json({ setup, remaining: Math.max(0, limit - (await db.usageToday(user.id))) });

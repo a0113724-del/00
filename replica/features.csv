@@ -30,7 +30,7 @@ Learning dashboard,learning,must,yes,no,
 Lessons in order with quiz unlock,learning,must,yes,no,
 On-demand video lessons,learning,should,yes,no,own content
 Live sessions list + reminders,learning,could,yes,no,own sessions
-Strategies library (LAB),learning,should,yes,no,own strategies (ORB etc.)
+Strategies library (LAB),learning,should,yes,yes,"own strategies (ORB etc.); S14 /learn: 25 strategies in 6 families, used by the AI"
 Expert portfolio tracker / follow,social,skip,yes,no,copy-trading regulation + network effect
 Subscription tiers + paywall,billing,must,yes (Connect tier),no,web payments first; IAP later
 Restore purchases,billing,should,yes (store),no,
@@ -39,3 +39,5 @@ Notification settings,account,should,inferred,no,
 Risk disclaimer on every analysis,legal,must,yes,yes,educational framing; card footer + banners
 Investment dashboard (stocks),scope,skip,yes,no,out of scope: gold focus
 Original name/logo/content/educators,brand,skip,yes,no,owned by original
+AI checks every playbook strategy + confluence score,ai,must,no,yes,differentiator; strategy ids stored for per-strategy win rates
+User can force one strategy,ai,should,no,yes,S06 picker filtered by scalp/swing

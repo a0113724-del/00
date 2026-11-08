@@ -12,3 +12,7 @@
 | S20 account | 2026-11-08 | partial | language, notifications, plan | — |
 
 E2E (Playwright, Chrome, 390px + 1440px): login validation, keyboard login, wrong-file-type error, upload, scalp/swing, analysis result, detail page with owner-only image, free limit (3/day) disables the button, list shows 3 cards, foreign chart URL → 404, logout. 0 console errors.
+| S06 strategies | 2026-11-08 | done | real-model check (sandbox can't reach Gemini) | playbook of 25 strategies / 6 families in `web/src/lib/ai/strategies.ts`; AI returns strategies_matched + primary_strategy + confluence_score; server drops unknown ids, requires a primary strategy for any trade; user can force one strategy (filtered by scalp/swing) |
+| S14 strategy library | 2026-11-08 | done (v1) | lessons/quizzes per strategy (M4) | — |
+
+Unit tests: `npm test` → 10/10 (validation geometry, R:R, stop width per style, strategy sanitising, forced-strategy prompt). Prompt ≈ 5k chars in auto mode.

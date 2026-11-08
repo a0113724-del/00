@@ -27,6 +27,12 @@ export interface AiSetup {
   invalidation: string;
   confidence: Confidence;
   rationale_ar: string;
+  /** strategies from the playbook that are present on the chart */
+  strategies_matched: { id: string; note_ar: string }[];
+  /** the strategy the setup is built on (null when direction = none) */
+  primary_strategy: string | null;
+  /** 0-100: how many independent reasons agree */
+  confluence_score: number;
 }
 
 export interface StoredSetup {
@@ -51,6 +57,10 @@ export interface StoredSetup {
   mock: boolean;
   warnings: string[];
   note?: string;
+  strategies: { id: string; note: string }[];
+  primaryStrategy?: string;
+  confluence?: number;
+  requestedStrategy?: string;
 }
 
 export const LIMITS: Record<Tier, number> = { free: 3, pro: 30, elite: 100 };

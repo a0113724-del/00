@@ -13,6 +13,8 @@ export interface Setup {
   status: SetupStatus;
   createdAt: string; // ISO
   pnlR?: number;
+  strategies?: { name: string; primary?: boolean }[];
+  confluence?: number;
 }
 
 const statusLabel: Record<SetupStatus, { t: string; tone: "neutral" | "accent" | "success" | "danger" | "warning" | "info" }> = {
@@ -68,6 +70,25 @@ export function TradeSetupCard({ s }: { s: Setup }) {
           <div><dt className="text-xs text-muted">الهدف 1</dt><dd className="num font-semibold text-success">{fmt(s.tp1)}</dd></div>
           <div><dt className="text-xs text-muted">الهدف 2</dt><dd className="num font-semibold text-success">{fmt(s.tp2)}</dd></div>
         </dl>
+      )}
+
+      {!!s.strategies?.length && (
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between text-xs text-muted">
+            <span>الاستراتيجيات المتحققة</span>
+            {s.confluence !== undefined && <span>التوافق <span className="num font-semibold text-text">{s.confluence}%</span></span>}
+          </div>
+          {s.confluence !== undefined && (
+            <div role="meter" aria-label="درجة توافق الأسباب" aria-valuemin={0} aria-valuemax={100} aria-valuenow={s.confluence} className="h-1.5 rounded-pill bg-surface-2">
+              <div className={cn("h-1.5 rounded-pill", s.confluence >= 60 ? "bg-success" : s.confluence >= 40 ? "bg-accent" : "bg-warning")} style={{ width: `${s.confluence}%` }} />
+            </div>
+          )}
+          <ul className="flex flex-wrap gap-1.5">
+            {s.strategies.map((x) => (
+              <li key={x.name}><Badge tone={x.primary ? "accent" : "neutral"}>{x.primary ? "★ " : ""}{x.name}</Badge></li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {s.invalidation && <p className="text-sm"><span className="text-muted">تلغى الفكرة: </span>{s.invalidation}</p>}

@@ -2,6 +2,7 @@ import "server-only";
 import crypto from "crypto";
 import type { AiSetup, Style } from "../types";
 import { SETUP_SCHEMA } from "./prompt";
+import { STRATEGIES } from "./strategies";
 
 export interface ProviderResult { setup: AiSetup; provider: string; model: string; mock: boolean }
 export interface Provider { name: string; analyze(img: Buffer, mime: string, prompt: string): Promise<ProviderResult> }
@@ -82,6 +83,10 @@ export const mock: Provider = {
     const unit = style === "scalp" ? 4 + (h[4] % 6) : 18 + (h[4] % 20);
     const s = dir === "buy" ? 1 : -1;
     const r = (n: number) => Math.round(n * 100) / 100;
+    const pool = STRATEGIES.filter((x) => x.styles.includes(style));
+    const forced = STRATEGIES.find((x) => prompt.includes(`[${x.id}]`) && prompt.includes("استراتيجية واحدة فقط"));
+    const picks = forced ? [forced] : [pool[h[6] % pool.length], pool[h[7] % pool.length], pool[h[8] % pool.length]].filter((x, i, a) => a.indexOf(x) === i);
+    const matched = picks.map((x) => ({ id: x.id, note_ar: `تجريبي: شروط ${x.name_ar} تبين جزئياً بالصورة.` }));
     await new Promise((res) => setTimeout(res, 900));
     return {
       provider: "mock", model: "mock-v1", mock: true,
@@ -89,6 +94,7 @@ export const mock: Provider = {
         is_gold_chart: true, symbol_seen: "XAUUSD", timeframe_seen: style === "scalp" ? "M15" : "H4", price_seen: r(base), direction: "none",
         entry_low: null, entry_high: null, sl: null, tp1: null, tp2: null, invalidation: "",
         confidence: "low", rationale_ar: "هذا تحليل تجريبي. السعر يتحرك بنطاق ضيق وماكو كسر واضح، فالأفضل الانتظار.",
+        strategies_matched: matched.slice(0, 1), primary_strategy: null, confluence_score: 20,
       } : {
         is_gold_chart: true, symbol_seen: "XAUUSD", timeframe_seen: style === "scalp" ? "M15" : "H4", price_seen: r(base),
         direction: dir, entry_low: r(base - unit * 0.15), entry_high: r(base + unit * 0.15),
@@ -97,6 +103,7 @@ export const mock: Provider = {
         invalidation: `إغلاق شمعة ${style === "scalp" ? "15 دقيقة" : "4 ساعات"} ${dir === "buy" ? "تحت" : "فوگ"} ${r(base - s * unit)}`,
         confidence: (["low", "medium", "high"] as const)[h[5] % 3],
         rationale_ar: `هذا تحليل تجريبي لعرض شكل النتيجة. السعر ${dir === "buy" ? "رجع لمنطقة دعم بعد موجة صعود" : "وصل لمقاومة بعد موجة هبوط"}، والهدف الأول قبل المستوى الجاي.`,
+        strategies_matched: matched, primary_strategy: matched[0].id, confluence_score: 35 + matched.length * 15,
       },
     };
   },
